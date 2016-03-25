@@ -16,4 +16,3 @@ names = noko.xpath('//table[.//th[.="%s"]]' % colname).map do |table|
 end.flatten.map(&:text)
 
 EveryPolitician::Wikidata.scrape_wikidata(names: { es: names.uniq }, output: false)
-warn EveryPolitician::Wikidata.notify_rebuilder
