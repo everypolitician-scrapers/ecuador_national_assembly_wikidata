@@ -11,6 +11,19 @@ names = EveryPolitician::Wikidata.wikipedia_xpath(
   xpath: './/a[not(@class="new")]/@title',
 ).reject { |n| n.start_with? 'Editar' }
 
-ids = %w(Q29051867)
+# Find all P39s of the 2nd Assembly
+query = <<EOS
+  SELECT DISTINCT ?item
+  WHERE
+  {
+    BIND(wd:Q21295982 AS ?membership)
+    BIND(wd:Q16629825 AS ?term)
 
-EveryPolitician::Wikidata.scrape_wikidata(ids: ids | existing, names: { es: names })
+    ?item p:P39 ?position_statement .
+    ?position_statement ps:P39 ?membership .
+    ?position_statement pq:P2937 ?term .
+  }
+EOS
+p39s = EveryPolitician::Wikidata.sparql(query)
+
+EveryPolitician::Wikidata.scrape_wikidata(ids: p39s | existing, names: { es: names })
